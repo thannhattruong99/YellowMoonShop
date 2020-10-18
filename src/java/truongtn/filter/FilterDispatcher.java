@@ -112,10 +112,8 @@ public class FilterDispatcher implements Filter {
         HttpServletRequest req = (HttpServletRequest) request;
         String uri = req.getRequestURI();
         LOGGER.info("Uri Dispatcher: " + uri);
-        String productNamme = request.getParameter("txtProductName");
         String url = START_APPLICATION;
         try {
-            System.out.println("REDIREproductNamme: " + productNamme);
             if ((uri.contains(".js") || uri.contains(".jpg") || uri.contains(".png")
                     || uri.contains(".gif") || uri.contains("jpeg") || uri.contains(".css")
                     || uri.contains(".woff") || uri.contains(".ttf")) && !uri.contains(".jsp")) {

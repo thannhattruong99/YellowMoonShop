@@ -133,14 +133,10 @@ public class RoleFilter implements Filter {
         HttpServletRequest req = (HttpServletRequest) request;
         HttpServletResponse res = (HttpServletResponse) response;
         String uri = req.getRequestURI();
-        System.out.println("URI ROLE: " + uri);
         int index = uri.lastIndexOf("/");
         String resource = uri.substring(index + 1);
-        String productNamme = request.getParameter("txtProductName");
         try {
-            System.out.println("PRODUCTNAME: " + productNamme);
             if(MyToys.isNullOrEmpty(resource)){
-                System.out.println("Resource empty");
                 chain.doFilter(request, response);
                 return;
             }
@@ -152,14 +148,11 @@ public class RoleFilter implements Filter {
                 String action = req.getParameter("btnAction");
 
                 HttpSession session = req.getSession(false);
-                System.out.println("RESOURCE ROLE: " + resource);
                 if (session == null || session.getAttribute("USER") == null) {
                     if (guest.contains(resource)) {
-                        System.out.println("1");
                         chain.doFilter(request, response);
 //                        return;
                     } else {
-                        System.out.println("2");
                         RequestDispatcher rd = req.getRequestDispatcher(LOGIN_PAGE);
                         rd.forward(request, response);
                     }
