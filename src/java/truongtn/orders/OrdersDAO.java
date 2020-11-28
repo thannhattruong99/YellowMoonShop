@@ -63,7 +63,7 @@ public class OrdersDAO implements Serializable {
         return false;
     }
 
-    public boolean checkoutOrder(OrdersDTO ordersDTO, CartObject cartObject) throws SQLException {
+    public boolean checkoutOrder(OrdersDTO ordersDTO, CartObject cartObject) throws NamingException, SQLException {
         PreparedStatement pstmOrderDetail;
         PreparedStatement pstmProduct;
         try {
@@ -114,7 +114,7 @@ public class OrdersDAO implements Serializable {
                 return true;
             }
         } catch (Exception e) {
-            System.out.println("Error at OrderDAO: " + e.getMessage());
+            
             if (con != null) {
                 con.rollback();
             }

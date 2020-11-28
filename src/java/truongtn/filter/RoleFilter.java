@@ -29,7 +29,6 @@ import truongtn.utils.MyToys;
  *
  * @author truongtn
  */
-
 @MultipartConfig(fileSizeThreshold = 1024 * 1024 * 2, // 2MB
         maxFileSize = 1024 * 1024 * 10, // 10MB
         maxRequestSize = 1024 * 1024 * 50)
@@ -40,9 +39,7 @@ public class RoleFilter implements Filter {
     private final static Logger LOGGER = Logger.getLogger(RoleFilter.class.getName());
 
     private final static String HOME_PAGE = "home.jsp";
-    private final static String LOGIN_PAGE = "login.html";
-
-    private final static String START_APPLICATION = "StartApplication";
+    private final static String LOGIN_PAGE = "login.jsp";
 
     private final String ADMIN_AUTHORITY_PATH = "truongtn.authority.Admin";
     private final String GUEST_AUTHORITY_PATH = "truongtn.authority.Guest";
@@ -136,7 +133,7 @@ public class RoleFilter implements Filter {
         int index = uri.lastIndexOf("/");
         String resource = uri.substring(index + 1);
         try {
-            if(MyToys.isNullOrEmpty(resource)){
+            if (MyToys.isNullOrEmpty(resource)) {
                 chain.doFilter(request, response);
                 return;
             }
@@ -151,7 +148,6 @@ public class RoleFilter implements Filter {
                 if (session == null || session.getAttribute("USER") == null) {
                     if (guest.contains(resource)) {
                         chain.doFilter(request, response);
-//                        return;
                     } else {
                         RequestDispatcher rd = req.getRequestDispatcher(LOGIN_PAGE);
                         rd.forward(request, response);

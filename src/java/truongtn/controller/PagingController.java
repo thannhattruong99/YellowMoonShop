@@ -34,9 +34,6 @@ public class PagingController extends HttpServlet {
     private final int PAGE_SIZE = 10;
     private final int MONEY_RANGE = 20000;
 
-//    private final String SUCCESS = "home.jsp";
-//    private final String FAIL = "StartAppication";
-
     /**
      * Processes requests for both HTTP <code>GET</code> and <code>POST</code>
      * methods.
@@ -53,7 +50,6 @@ public class PagingController extends HttpServlet {
         String numberPageStr = request.getParameter("txtNumberPage");
         String txtNotify = request.getParameter("txtNotify");
         try {
-            System.out.println("PAGING");
             HttpSession session = request.getSession();
             String searchValue = null;
             long minPrice = -1;
@@ -107,10 +103,8 @@ public class PagingController extends HttpServlet {
             session.setAttribute("SEARCH_VALUE", searchObject);
             session.setAttribute("PRODUCTS", productList);
 
-        } catch (NamingException | SQLException ex) {
+        } catch (NamingException | SQLException | ParseException ex) {
             log.error("Error at PagingController: " + ex.getMessage());
-        } catch (ParseException ex) {
-            java.util.logging.Logger.getLogger(PagingController.class.getName()).log(Level.SEVERE, null, ex);
         } finally {
             RequestDispatcher rd = request.getRequestDispatcher("home.jsp");
             rd.forward(request, response);

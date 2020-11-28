@@ -15,6 +15,7 @@ import javax.servlet.ServletException;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import org.apache.log4j.Logger;
 import truongtn.orderdetail.OrderDetailDAO;
 import truongtn.orderdetail.OrderDetailDTO;
 import truongtn.utils.MyToys;
@@ -24,7 +25,9 @@ import truongtn.utils.MyToys;
  * @author truongtn
  */
 public class ViewOrderDetailController extends HttpServlet {
-    
+
+    private static final Logger log = Logger.getLogger(ViewOrderDetailController.class.getName());
+
     /**
      * Processes requests for both HTTP <code>GET</code> and <code>POST</code>
      * methods.
@@ -40,17 +43,17 @@ public class ViewOrderDetailController extends HttpServlet {
         PrintWriter out = response.getWriter();
         String orderId = request.getParameter("txtOrderId");
         try {
-            if(!MyToys.isNullOrEmpty(orderId)){
+            if (!MyToys.isNullOrEmpty(orderId)) {
                 OrderDetailDAO orderDetailDAO = new OrderDetailDAO();
                 List<OrderDetailDTO> orderDetailList = orderDetailDAO.getListOrderDetailById(orderId);
-                if(orderDetailList != null){
+                if (orderDetailList != null) {
                     request.setAttribute("ORDERID", orderId);
                     request.setAttribute("ORDER_DETAILS", orderDetailList);
                 }
             }
-            
+
         } catch (NamingException | SQLException ex) {
-            System.out.println("Error at ViewOrderDetailController: " + ex.getMessage());
+            log.error("Error at ViewOrderDetailController: " + ex.getMessage());
         } finally {
             RequestDispatcher rd = request.getRequestDispatcher("orders.jsp");
             rd.forward(request, response);

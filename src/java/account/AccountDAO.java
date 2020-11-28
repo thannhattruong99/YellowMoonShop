@@ -165,6 +165,27 @@ public class AccountDAO implements Serializable {
         return false;
     }
     
+    public boolean createAccountByFaceBook(AccountDTO accountDTO) throws NamingException, SQLException{
+        try {
+            con = DBHelper.makeConnection();
+            if(con != null){
+                String sql = "INSERT INTO TblAccount(userId, fullname, roleId, statusId) VALUES (?, ?, ?, ?)";
+                pstm = con.prepareStatement(sql);
+                pstm.setString(1, accountDTO.getUserId());
+                pstm.setString(2, accountDTO.getFullname());
+                pstm.setInt(3, accountDTO.getRoleId());
+                pstm.setInt(4, accountDTO.getStatusId());
+                int rows = pstm.executeUpdate();
+                if(rows > 0){
+                    return true;
+                }
+            }
+        } finally {
+            closeConnection();
+        }
+        return false;
+    }
+    
     public boolean updateAccountRole(AccountDTO accountDTO) throws NamingException, SQLException {
         try {
             con = DBHelper.makeConnection();

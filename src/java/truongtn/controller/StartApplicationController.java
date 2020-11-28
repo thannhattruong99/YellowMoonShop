@@ -10,8 +10,6 @@ import java.io.PrintWriter;
 import java.sql.SQLException;
 import java.text.ParseException;
 import java.util.List;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 import javax.naming.NamingException;
 import javax.servlet.RequestDispatcher;
 import javax.servlet.ServletException;
@@ -19,6 +17,7 @@ import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
+import org.apache.log4j.Logger;
 import truongtn.category.CategoryDAO;
 import truongtn.category.CategoryDTO;
 import truongtn.moneyrange.MoneyRangeObject;
@@ -31,6 +30,8 @@ import truongtn.product.ProductDTO;
  */
 public class StartApplicationController extends HttpServlet {
 
+    private static final Logger log = Logger.getLogger(SearchProductController.class.getName());
+
     /**
      * Processes requests for both HTTP <code>GET</code> and <code>POST</code>
      * methods.
@@ -41,7 +42,7 @@ public class StartApplicationController extends HttpServlet {
      * @throws IOException if an I/O error occurs
      */
     protected void processRequest(HttpServletRequest request, HttpServletResponse response)
-            throws ServletException, IOException{
+            throws ServletException, IOException {
         response.setContentType("text/html;charset=UTF-8");
         PrintWriter out = response.getWriter();
         HttpSession session = request.getSession();
@@ -51,22 +52,19 @@ public class StartApplicationController extends HttpServlet {
             List<ProductDTO> produdctDTOs = productDAO.loadProductInit();
             long maxPrice = productDAO.getMaxPrice();
             MoneyRangeObject moneyRangeDTO = new MoneyRangeObject(maxPrice);
-            
+
             //Category
             CategoryDAO categoryDAO = new CategoryDAO();
             List<CategoryDTO> categoryDTOs = categoryDAO.getCategoryList();
-            
-            
+
             session.setAttribute("PRODUCTS", produdctDTOs);
-            
+
             //load search form
             session.setAttribute("MONEY_RANGE", moneyRangeDTO.getMoneyRange());
             session.setAttribute("CATEGORY", categoryDTOs);
-            
-        } catch (NamingException | SQLException ex) {
-            System.out.println("Error at StartAppController: " + ex.getMessage());
-        } catch (ParseException ex) {
-            Logger.getLogger(StartApplicationController.class.getName()).log(Level.SEVERE, null, ex);
+
+        } catch (NamingException | SQLException | ParseException ex) {
+            log.error("Error at StartAppController: " + ex.getMessage());
         } finally {
             RequestDispatcher rd = request.getRequestDispatcher("home.jsp");
             rd.forward(request, response);

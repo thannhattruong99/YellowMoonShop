@@ -121,10 +121,7 @@ public class FilterDispatcher implements Filter {
             } else {
                 int lastIndex = uri.lastIndexOf("/");
                 String resource = uri.substring(lastIndex + 1);
-//                if(resource.contains("Controller")){
-//                    chain.doFilter(request, response);
-//                    return;
-//                }
+
                 if (resource.length() > 0) {
                     url = resource.substring(0, 1).toUpperCase()
                             + resource.substring(1) + "Controller";
@@ -140,7 +137,7 @@ public class FilterDispatcher implements Filter {
                 }
             }
 
-        } catch (Throwable t) {
+        } catch (IOException | ServletException t) {
             LOGGER.error("Error at FilterDispatcher: " + t.getMessage());
         }
         doAfterProcessing(request, response);

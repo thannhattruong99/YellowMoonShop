@@ -17,13 +17,14 @@ import javax.sql.DataSource;
  *
  * @author truongtn
  */
-public class DBHelper implements Serializable{
-    public static Connection makeConnection() throws NamingException, SQLException{
+public class DBHelper implements Serializable {
+
+    public static Connection makeConnection() throws NamingException, SQLException {
         Context context = new InitialContext();
         Context tomcatCtx = (Context) context.lookup("java:comp/env");
         DataSource ds = (DataSource) tomcatCtx.lookup("SE130426");
         Connection con = ds.getConnection();
         return con;
     }
-    
+
 }

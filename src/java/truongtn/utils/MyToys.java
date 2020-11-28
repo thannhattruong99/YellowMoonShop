@@ -164,8 +164,4 @@ public class MyToys {
         }
     }
 
-//    public static void main(String[] args) {
-//
-//    }
-
 }

@@ -17,6 +17,7 @@ import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
+import org.apache.log4j.Logger;
 import truongtn.orders.OrdersDAO;
 import truongtn.orders.OrdersDTO;
 
@@ -25,7 +26,7 @@ import truongtn.orders.OrdersDTO;
  * @author truongtn
  */
 public class SearchOrderController extends HttpServlet {
-
+    private static final Logger log = Logger.getLogger(ResendCodeController.class.getName());
     private final String FAIL = "login.jsp";
     private final String SUCCESS = "orders.jsp";
 
@@ -63,7 +64,7 @@ public class SearchOrderController extends HttpServlet {
             }
 
         } catch (SQLException | NamingException ex) {
-            System.out.println("Error at SearchOrderController: " + ex.getMessage());
+            log.error("Error at SearchOrderController: " + ex.getMessage());
         } finally {
             RequestDispatcher rd = request.getRequestDispatcher(url);
             rd.forward(request, response);

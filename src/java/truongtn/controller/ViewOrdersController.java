@@ -16,6 +16,7 @@ import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
+import org.apache.log4j.Logger;
 import truongtn.orders.OrdersDAO;
 import truongtn.orders.OrdersDTO;
 import truongtn.utils.MyToys;
@@ -26,6 +27,7 @@ import truongtn.utils.MyToys;
  */
 public class ViewOrdersController extends HttpServlet {
 
+    private static final Logger log = Logger.getLogger(ViewOrderDetailController.class.getName());
     private final String FAIL = "login.jsp";
     private final String SUCCESS = "orders.jsp";
     private final String VIEW_ORDER_DETAIIL = "ViewOrderDetail?txtOrderId=";
@@ -57,7 +59,7 @@ public class ViewOrdersController extends HttpServlet {
                     if (ordersDTOs != null) {
                         session.setAttribute("ORDERS", ordersDTOs);
                         url = SUCCESS;
-                        if(!MyToys.isNullOrEmpty(orderId)){
+                        if (!MyToys.isNullOrEmpty(orderId)) {
                             url = VIEW_ORDER_DETAIIL + orderId;
                         }
                     } else {
@@ -66,7 +68,7 @@ public class ViewOrdersController extends HttpServlet {
                 }
             }
         } catch (NamingException | SQLException ex) {
-            System.out.println("Error at ViewOrderController: " + ex.getMessage());
+            log.error("Error at ViewOrderController: " + ex.getMessage());
         } finally {
             response.sendRedirect(url);
             out.close();

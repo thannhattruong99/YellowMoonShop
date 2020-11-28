@@ -18,6 +18,7 @@ import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.Part;
+import org.apache.log4j.Logger;
 import truongtn.category.CategoryDAO;
 import truongtn.product.CreateProductError;
 import truongtn.product.ProductDAO;
@@ -33,7 +34,7 @@ import truongtn.utils.MyToys;
         maxFileSize = 1024 * 1024 * 10, // 10MB
         maxRequestSize = 1024 * 1024 * 50)
 public class CreateCakeController extends HttpServlet {
-
+    private static final Logger log = Logger.getLogger(CreateCakeController.class.getName());
     private final String FAIL = "createCake.jsp";
     private final String SUCCESS = "StartApplicationController";
     private static final String SAVE_PATH = "images/";
@@ -67,8 +68,7 @@ public class CreateCakeController extends HttpServlet {
         CreateProductError createProductError = new CreateProductError();
         boolean foundErr = false;
         try {
-            System.out.println("productName: " + productName);
-            if ( MyToys.isNullOrEmpty(productName)|| !MyToys.checkStringLength(productName, 6, 200)) {
+            if (!MyToys.checkStringLength(productName, 6, 200)) {
                 foundErr = true;
                 createProductError.setProductNameLengErr("Product name is inputed from 6 to 200 characters");
             }
@@ -151,7 +151,7 @@ public class CreateCakeController extends HttpServlet {
             }
 
         } catch (NamingException | SQLException ex) {
-            System.out.println("Error at CreateCakeController: " + ex.getMessage());
+            log.error("Error at CreateCakeController: " + ex.getMessage());
         } finally {
             RequestDispatcher rd = request.getRequestDispatcher(url);
             rd.forward(request, response);

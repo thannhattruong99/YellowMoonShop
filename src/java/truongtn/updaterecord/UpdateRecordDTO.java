@@ -11,13 +11,20 @@ import java.io.Serializable;
  *
  * @author truongtn
  */
-public class UpdateRecordDTO implements Serializable{
+public class UpdateRecordDTO implements Serializable {
+
     private String udpateId;
     private String editDate;
     private String userId;
     private String productId;
 
     public UpdateRecordDTO() {
+    }
+
+    public UpdateRecordDTO(String editDate, String userId, String productId) {
+        this.editDate = editDate;
+        this.userId = userId;
+        this.productId = productId;
     }
 
     public String getUdpateId() {
@@ -51,5 +58,5 @@ public class UpdateRecordDTO implements Serializable{
     public void setProductId(String productId) {
         this.productId = productId;
     }
-    
+
 }

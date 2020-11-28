@@ -16,6 +16,7 @@ import java.util.List;
 import java.util.Map.Entry;
 import javax.naming.NamingException;
 import truongtn.cart.CartObject;
+import truongtn.updaterecord.UpdateRecordDTO;
 import truongtn.utils.DBHelper;
 import truongtn.utils.MyToys;
 
@@ -139,6 +140,45 @@ public class ProductDAO implements Serializable {
         return result;
     }
 
+    public int countRecordForSearchingByAdmin(String productName, int categoryId, long minPrice, long maxPrice) throws NamingException, SQLException, ParseException {
+        int result = 0;
+        try {
+            con = DBHelper.makeConnection();
+            if (con != null) {
+                String sql = "SELECT count(P.productId) AS TOTAL "
+                        + "FROM TblProduct P "
+                        + "WHERE P.productName LIKE ? ";
+
+                if (minPrice == -1) {
+                    sql += " AND 0 = 0 ";
+                } else {
+                    sql += " AND (P.price BETWEEN " + minPrice + " AND " + maxPrice + " ) ";
+                }
+                if (categoryId == -1) {
+                    sql += " AND 0 = 0 ";
+                } else {
+                    sql += " AND P.categoryId = " + categoryId;
+                }
+                pstm = con.prepareStatement(sql);
+                if (MyToys.isNullOrEmpty(productName)) {
+                    pstm.setString(1, "%%");
+                } else {
+                    pstm.setString(1, "%" + productName + "%");
+                }
+                rs = pstm.executeQuery();
+
+                if (rs.next()) {
+                    result = rs.getInt("TOTAL");
+                }
+            }
+        } finally {
+            closeConnection();
+        }
+
+        return result;
+    }
+
+    
     public List<ProductDTO> searchProduct(String productName, int categoryId, long minPrice, long maxPrice, int offSet, int size) throws SQLException, NamingException, ParseException {
         List<ProductDTO> productList = null;
         try {
@@ -246,7 +286,7 @@ public class ProductDAO implements Serializable {
                     String expirationDate = rs.getString("expirationDate");
                     int categoryId = rs.getInt("categoryId");
                     String userId = rs.getString("userId");
-                    ProductDTO productDTO = new ProductDTO(productId, productName, image, price, quantity, categoryId, description, createdDate, expirationDate, statusId, userId);
+                    ProductDTO productDTO = new ProductDTO(productId, name, image, price, quantity, categoryId, description, createdDate, expirationDate, statusId, userId);
                     if (productList == null) {
                         productList = new ArrayList<>();
                     }
@@ -313,6 +353,27 @@ public class ProductDAO implements Serializable {
         return false;
     }
     
+    public String getProductIdByName(String productName) throws NamingException, SQLException{
+        String result = null;
+        try {
+            con = DBHelper.makeConnection();
+            if(con != null){
+                String sql = "SELECT productID FROM TblProduct WHERE upper(productName) = upper(?) AND statusId = 2";
+                pstm = con.prepareStatement(sql);
+                pstm.setString(1, productName);
+                
+                rs = pstm.executeQuery();
+                if(rs.next()){
+                   result = rs.getString("productId");
+                }
+            }
+        } finally {
+            closeConnection();
+        }
+        
+        return result;
+    }
+    
     public boolean createProduct(ProductDTO productDTO) throws NamingException, SQLException{
         try {
             con = DBHelper.makeConnection();
@@ -343,4 +404,52 @@ public class ProductDAO implements Serializable {
         return false;
     }
 
+    
+    public boolean updateProduct(ProductDTO productDTO, UpdateRecordDTO updateRecordDTO) throws NamingException, SQLException{
+        PreparedStatement pstm2;
+        try {
+            con = DBHelper.makeConnection();
+            if(con != null){
+                con.setAutoCommit(false);
+                String updateProductsql = "UPDATE TblProduct SET productName = ?, image = ?, price = ?, quantity = ?, categoryId = ?, description = ?, createdDate = ?, expirationDate = ?, statusId = ? WHERE productId = ?";
+                String insertTblUpdateSql = "INSERT INTO TblUpdateRecord(editDate, userId, productId) VALUES(?, ?, ?)";
+                pstm = con.prepareStatement(updateProductsql);
+                pstm2 = con.prepareStatement(insertTblUpdateSql);
+                
+                pstm.setString(1, productDTO.getProductName());
+                pstm.setString(2, productDTO.getImage());
+                pstm.setLong(3, productDTO.getPrice());
+                pstm.setInt(4, productDTO.getQuantity());
+                pstm.setInt(5, productDTO.getCategoryId());
+                pstm.setString(6, productDTO.getDescription());
+                pstm.setString(7, productDTO.getCreatedDate());
+                pstm.setString(8, productDTO.getExpirationDate());
+                pstm.setInt(9, productDTO.getStatusId());
+                pstm.setString(10, productDTO.getProductId());
+                
+                pstm2.setString(1, updateRecordDTO.getEditDate());
+                pstm2.setString(2, updateRecordDTO.getUserId());
+                pstm2.setString(3, updateRecordDTO.getProductId());
+                
+                int rows = pstm.executeUpdate();
+                if(rows > 0){
+                    rows = pstm2.executeUpdate();
+                }
+            
+                con.commit();
+                
+                if(rows > 0){
+                    return true;
+                }
+            }
+        } catch (NamingException | SQLException e) {
+            if(con != null){
+                con.rollback();
+            }
+        }finally{
+            closeConnection();
+        }
+        
+        return false;
+    }
 }

@@ -12,6 +12,7 @@ import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
+import org.apache.log4j.Logger;
 import truongtn.cart.CartObject;
 import truongtn.product.ProductDTO;
 import truongtn.utils.MyToys;
@@ -21,7 +22,7 @@ import truongtn.utils.MyToys;
  * @author truongtn
  */
 public class AddToCartController extends HttpServlet {
-
+    private static final Logger log = Logger.getLogger(AddToCartController.class.getName());
     private final String CART_PAGE = "cart.jsp";
     private final String PAGING_ACTION = "paging";
 
@@ -81,7 +82,7 @@ public class AddToCartController extends HttpServlet {
                 session.setAttribute("CART", cartObject);
             }
         } catch (Exception ex) {
-            System.out.println("Error at AddToCartController: " + ex.getMessage());
+            log.error("Error at AddToCartController: " + ex.getMessage());
         } finally {
             response.sendRedirect(url);
             out.close();

@@ -20,6 +20,7 @@ import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
+import org.apache.log4j.Logger;
 import truongtn.cart.CartObject;
 import truongtn.orders.OrdersDAO;
 import truongtn.orders.OrdersDTO;
@@ -32,7 +33,7 @@ import truongtn.utils.MyToys;
  * @author truongtn
  */
 public class CheckOutController extends HttpServlet {
-
+    private static final Logger log = Logger.getLogger(CheckOutController.class.getName());
     private final String SUCCESS = "ViewOrders?txtOrderId=";
     private final String FAIL = "cart.jsp";
 
@@ -52,7 +53,6 @@ public class CheckOutController extends HttpServlet {
 
         HttpSession session = request.getSession();
 
-        String btnAction = request.getParameter("btnAciton");
         String userId = request.getParameter("txtUserId");
         String fullname = request.getParameter("txtFullname");
         String shippingAddr = request.getParameter("txtShippingAddr");
@@ -101,7 +101,7 @@ public class CheckOutController extends HttpServlet {
             }
             url = FAIL;
 
-            System.out.println("Error at CheckOutController: " + ex.getMessage());
+            log.error("Error at CheckOutController: " + ex.getMessage());
         } finally {
             response.sendRedirect(url);
             out.close();

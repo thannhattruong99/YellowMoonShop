@@ -19,34 +19,35 @@ import truongtn.utils.DBHelper;
  *
  * @author truongtn
  */
-public class CategoryDAO implements Serializable{
+public class CategoryDAO implements Serializable {
+
     private Connection con;
     private PreparedStatement pstm;
     private ResultSet rs;
-    
-    private void closeConnection() throws SQLException{
-        if(rs != null){
+
+    private void closeConnection() throws SQLException {
+        if (rs != null) {
             rs.close();
         }
-        if(pstm != null){
+        if (pstm != null) {
             pstm.close();
         }
-        if(rs != null){
+        if (rs != null) {
             rs.close();
         }
     }
-    
-    public List<CategoryDTO> getCategoryList() throws NamingException, SQLException{
+
+    public List<CategoryDTO> getCategoryList() throws NamingException, SQLException {
         List<CategoryDTO> categoryList = null;
-        
+
         try {
             con = DBHelper.makeConnection();
-            if(con != null){
+            if (con != null) {
                 String sql = "SELECT categoryId, categoryName FROM TblCategory";
                 pstm = con.prepareStatement(sql);
                 rs = pstm.executeQuery();
-                while(rs.next()){
-                    if(categoryList == null){
+                while (rs.next()) {
+                    if (categoryList == null) {
                         categoryList = new ArrayList<>();
                     }
                     int categoryId = rs.getInt("categoryId");
@@ -59,18 +60,18 @@ public class CategoryDAO implements Serializable{
             closeConnection();
         }
         return categoryList;
-    } 
-    
-    public int getCategoryId(String categoryName) throws NamingException, SQLException{
+    }
+
+    public int getCategoryId(String categoryName) throws NamingException, SQLException {
         int categoryId = -1;
         try {
             con = DBHelper.makeConnection();
-            if(con != null){
+            if (con != null) {
                 String sql = "SELECT categoryId FROM TblCategory WHERE upper(categoryName) = upper(?)";
                 pstm = con.prepareStatement(sql);
                 pstm.setString(1, categoryName);
                 rs = pstm.executeQuery();
-                if(rs.next()){
+                if (rs.next()) {
                     categoryId = rs.getInt("categoryId");
                 }
             }
@@ -79,17 +80,17 @@ public class CategoryDAO implements Serializable{
         }
         return categoryId;
     }
-    
-    public boolean createCategory(String categoryName) throws NamingException, SQLException{
+
+    public boolean createCategory(String categoryName) throws NamingException, SQLException {
         try {
             con = DBHelper.makeConnection();
-            if(con != null){
+            if (con != null) {
                 String insertSql = "INSERT INTO TblCategory(categoryName) VALUES (?)";
                 pstm = con.prepareStatement(insertSql);
                 pstm.setString(1, categoryName);
-                
+
                 int rows = pstm.executeUpdate();
-                if(rows > 0){
+                if (rows > 0) {
                     return true;
                 }
             }
@@ -99,4 +100,27 @@ public class CategoryDAO implements Serializable{
         return false;
     }
 
+    public List<CategoryDTO> getCategoryDTOs() throws NamingException, SQLException {
+        List<CategoryDTO> categoryDTOs = null;
+        try {
+            con = DBHelper.makeConnection();
+            if (con != null) {
+                String sql = "SELECT categoryId, categoryName FROM TblCategory";
+                pstm = con.prepareStatement(sql);
+                rs = pstm.executeQuery();
+                while (rs.next()) {
+                    if (categoryDTOs == null) {
+                        categoryDTOs = new ArrayList<>();
+                    }
+                    int categoryId = rs.getInt("categoryId");
+                    String categoryName = rs.getString("categoryName");
+                    CategoryDTO categoryDTO = new CategoryDTO(categoryId, categoryName);
+                    categoryDTOs.add(categoryDTO);
+                }
+            }
+        } finally {
+            closeConnection();
+        }
+        return categoryDTOs;
+    }
 }
